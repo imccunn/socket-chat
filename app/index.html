@@ -7,27 +7,29 @@
 		<link rel="stylesheet" type="text/css" href="css/main.css">
 	</head>
 	<body>
-		<div>
-			<h2 class="headTitle">Socket.io Chat</h2>
-		</div>
-		<div id="chatContainer">
-			<div id="messagesView">
-				<ul id="messages">
-					
-				</ul>
+		<div class="main">
+			<div>
+				<h2 class="headTitle"><marquee>Socket.io Chat</marquee></h2>
 			</div>
+			<div id="chatContainer">
+				<div id="messagesView">
+					<ul id="messages">
+						
+					</ul>
+				</div>
 
-			<form id="userInput">
+				<form id="userInput">
 
-				<label for="name">handle: </label>
-				<input type="text" placeholder="Mr. Milk" value="Mr. Milk" id="name">
-				
-				<input type="text" placeholder="Enter message here..." id="m">
-				
-				<br>
-				<input type="submit" value="Send">
-			</form>
+					<label for="name">handle: </label>
+					<input type="text" placeholder="Mr. Milk" value="Mr. Milk" id="name">
+					
+					<input type="text" placeholder="Enter message here..." id="m">
+					
+					<br>
+					<input type="submit" value="Send">
+				</form>
 
+			</div>
 		</div>
 		
 		<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>

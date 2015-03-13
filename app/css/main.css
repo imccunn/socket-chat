@@ -14,6 +14,11 @@ input[type="submit"]:hover {
 	cursor: pointer;
 }
 
+.main {
+	width: 600px;
+	margin: auto;
+}
+
 #chatContainer {
 	width: 600px;
 

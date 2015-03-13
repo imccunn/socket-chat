@@ -19,7 +19,6 @@ app.use(express.static('app'));
 
 io.on('connection', function(socket) {
 	console.log('A user connected.');
-	io.emit('userConnect', );
 
 	socket.on('cMsg', function (nameMsg) {
 		var time = new Date();
