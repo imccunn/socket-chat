@@ -35,7 +35,7 @@ input[type="submit"]:hover {
 	height: 370px;
 }
 #m {
-	width: 100%;
+	width: 90%;
 }
 
 #messages {
@@ -44,6 +44,7 @@ input[type="submit"]:hover {
 #messages li {
 	padding-top: 2px;
 	padding-bottom: 2px;
+	margin-left: -20px;
 }
 
 #userInput{

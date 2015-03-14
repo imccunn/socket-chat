@@ -16,10 +16,11 @@ var io = require('socket.io')(http);
 
 app.use(express.static('app'));
 
+var users = [];
 
 io.on('connection', function(socket) {
 	console.log('A user connected.');
-
+	
 	socket.on('cMsg', function (nameMsg) {
 		var time = new Date();
 		var timeString = '' + time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
