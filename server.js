@@ -28,7 +28,8 @@ io.on('connection', function(socket) {
 		console.log('message: ' + nameMsg[0] + ': ' + nameMsg[1]);
 		io.emit('cMsg', [timeString, nameMsg[0], nameMsg[1]]);
 	});
-
+  
+  socket.on('typing', function() {}); // TODO: broadcast when user is typing
 	socket.on('disconnect', function() {
 		console.log('user disconnected');
 	});
