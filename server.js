@@ -10,16 +10,14 @@ var io = require('socket.io')(http);
 // 	res.sendFile(__dirname + '/app/index.html');
 // });
 
-// app.get('/css/main.css', function (req, res) {
-// 	res.sendFile(__dirname + '/app/css/main.css');
-// });
-
 app.use(express.static('app'));
 
 var users = [];
 
 io.on('connection', function(socket) {
 	console.log('A user connected.');
+  // Track users by socket
+  users.push(socket);
 	
 	socket.on('cMsg', function (nameMsg) {
 		var time = new Date();
@@ -29,9 +27,13 @@ io.on('connection', function(socket) {
 		io.emit('cMsg', [timeString, nameMsg[0], nameMsg[1]]);
 	});
   
-  socket.on('typing', function() {}); // TODO: broadcast when user is typing
-	socket.on('disconnect', function() {
-		console.log('user disconnected');
+  socket.on('typing', function(status) { // TODO: broadcast when user is typing
+    io.emit('userTyping', status);
+  }); 	
+  socket.on('disconnect', function(socket) {
+		console.log('User disconnected.');
+    var i = users.indexOf(socket);
+    users.splice(i, 1);
 	});
 });
 
