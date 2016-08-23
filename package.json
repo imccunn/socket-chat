@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/imccunn/socket-chat",
   "dependencies": {
-    "express": "^4.12.2",
-    "socket.io": "^1.3.5"
+    "express": "^4.14.0",
+    "socket.io": "^1.4.8"
   }
 }

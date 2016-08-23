@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>A Chat App</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+  </head>
+  <body>
+    <div class="main">
+      <div>
+        <h2 class="headTitle">Socket.io Chat</h2>
+      </div>
+      <div id="chatContainer">
+        <div id="messagesView">
+          <ul id="messages">
+            
+          </ul>
+        </div>
+
+        <form id="userInput">
+
+          <!-- <label for="name">handle: </label> -->
+          <!-- <input type="text" placeholder="Mr. Milk" value="Mr. Milk" id="name"> -->
+          
+          <input type="text" placeholder="Enter message here..." id="m">
+          <input type="submit" value="Send">
+        </form>
+
+      </div>
+    </div>
+    
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      var name = prompt("Enter your chat handle:");
+
+      if (name.length < 1) name = "Pippy";
+      
+      //$("#name").val(name);
+      var socket = io();
+      $('form').submit(function(){
+        //name = $("#name").val();
+        var msg = document.getElementById("m").value;
+        socket.emit('cMsg', [name, msg]);
+
+        document.getElementById("m").value = "";    
+        return false; 
+      });
+
+      socket.on("cMsg", function(msg) {
+        $("#messages").append($("<li>").text('[' + msg[0] + '] ' + msg[1] + ': ' + msg[2]));
+      });
+
+      var $cont = $('#messagesView');
+
+      $('#m').keyup(function(e) {
+        if (e.keyCode == 13) {
+          $cont[0].scrollTop = $cont[0].scrollHeight;
+        }
+      });
+    </script>
+  </body>
+</html>
