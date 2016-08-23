@@ -28,6 +28,7 @@
         </form>
 
       </div>
+      <div id="status"></div>
     </div>
     
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
@@ -44,21 +45,32 @@
         var msg = document.getElementById("m").value;
         socket.emit('cMsg', [name, msg]);
 
-        document.getElementById("m").value = "";    
+        document.getElementById("m").value = "";
         return false; 
       });
 
       socket.on("cMsg", function(msg) {
         $("#messages").append($("<li>").text('[' + msg[0] + '] ' + msg[1] + ': ' + msg[2]));
       });
+      socket.on('userTyping', function(name) {
+        clearTimeout(timer);
+        var timer = setTimeout(function() {
+          $('#status').text('');
+        }, 2000);
+        $('#status').text('' + name + ' is typing something...');
+        
+      })
 
       var $cont = $('#messagesView');
 
       $('#m').keyup(function(e) {
+        socket.emit('typing', name);
         if (e.keyCode == 13) {
           $cont[0].scrollTop = $cont[0].scrollHeight;
         }
       });
+
+
     </script>
   </body>
 </html>

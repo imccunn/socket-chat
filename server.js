@@ -27,8 +27,8 @@ io.on('connection', function(socket) {
     io.emit('cMsg', [timeString, nameMsg[0], nameMsg[1]]);
   });
   
-  socket.on('typing', function(status) { // TODO: broadcast when user is typing
-    io.emit('userTyping', status);
+  socket.on('typing', function(name) { // TODO: broadcast when user is typing
+    io.emit('userTyping', name);
   });   
   socket.on('disconnect', function(socket) {
     console.log('User disconnected.');
