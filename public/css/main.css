@@ -34,6 +34,10 @@ input[type="submit"]:hover {
 	margin: 10px;
 	height: 370px;
 }
+
+.msg:hover {
+	background-color: #ddd;
+}
 #m {
 	width: 90%;
 }

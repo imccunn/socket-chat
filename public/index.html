@@ -11,6 +11,7 @@
       <div>
         <h2 class="headTitle">Socket.io Chat</h2>
       </div>
+      <div id="room" style="border: 1px solid #000;"></div>
       <div id="chatContainer">
         <div id="messagesView">
           <ul id="messages">
@@ -34,23 +35,36 @@
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
+      var socket = io();
       var name = prompt("Enter your chat handle:");
-
+      socket.emit('name', name);
       if (name.length < 1) name = "Pippy";
       
       //$("#name").val(name);
-      var socket = io();
+      var userNames = [];
+      var room = $('#room');
+      room.append($('<p>').text(name));
       $('form').submit(function(){
         //name = $("#name").val();
         var msg = document.getElementById("m").value;
         socket.emit('cMsg', [name, msg]);
 
         document.getElementById("m").value = "";
-        return false; 
+        return false;
       });
 
+      socket.on('updateRoom', function(userNames) {
+    // so keep that in mind.For unit tests we'll want to stub the responses from github. [IDM]
+        userNames = userNames;
+        var room = $('#room');
+        room.empty();
+        for (var i in userNames) {
+          room.append($('<p>').text(userNames[i]));
+        }
+      })
       socket.on("cMsg", function(msg) {
-        $("#messages").append($("<li>").text('[' + msg[0] + '] ' + msg[1] + ': ' + msg[2]));
+        var li = $("<li>").addClass('msg').text('[' + msg[0] + '] ' + msg[1] + ': ' + msg[2]);
+        $("#messages").append(li);
       });
       socket.on('userTyping', function(name) {
         clearTimeout(timer);

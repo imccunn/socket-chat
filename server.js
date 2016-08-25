@@ -13,12 +13,20 @@ var io = require('socket.io')(http);
 app.use(express.static('public'));
 
 var users = [];
+var userNames = [];
 
 io.on('connection', function(socket) {
   console.log('A user connected.');
   // Track users by socket
   users.push(socket);
   
+
+  socket.on('name', function(name) {
+    users[users.indexOf(socket)].name = name;
+    userNames.push(name);
+    io.emit('updateRoom', userNames);
+    console.log('users: ', userNames);
+  }); 
   socket.on('cMsg', function (nameMsg) {
     var time = new Date();
     var timeString = '' + time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
@@ -32,8 +40,15 @@ io.on('connection', function(socket) {
   });   
   socket.on('disconnect', function(socket) {
     console.log('User disconnected.');
+    console.log(users);
     var i = users.indexOf(socket);
-    users.splice(i, 1);
+    console.log(i);
+    if (users && i !== -1) {
+      userNames.splice(userNames.indexOf(users[i].name), 1);
+      users.splice(i, 1);
+    }
+    
+    io.emit('updateRoom')
   });
 });
 
