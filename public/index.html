@@ -58,6 +58,8 @@
         socket.emit('cMsg', [name, msg]);
 
         document.getElementById("m").value = "";
+        var li = $("<li>").addClass('msg').text('[' + getClockTime() + '] ' + name + ': ' + msg);
+        $("#messages").append(li);
         return false;
       });
 
@@ -73,10 +75,11 @@
       socket.on("cMsg", function(msg) {
         var li = $("<li>").addClass('msg').text('[' + msg[0] + '] ' + msg[1] + ': ' + msg[2]);
         $("#messages").append(li);
+        playSound(beep);
       });
 
       socket.on('userJoin', function(user) {
-        var li = $('<li>').css({color: '#777'}).text('User ' + name + ' has joined.');
+        var li = $('<li>').css({color: '#777'}).text('User ' + user + ' has joined.');
         $('#messages').append(li);
       })
 
@@ -103,43 +106,56 @@
         }
       });
 
+      window.AudioContext = window.AudioContext || window.webkitAudioContext;
+      var ctx = new AudioContext();
 
+      audio1 = null;
+      beep = null;
+      function playSound(buffer) {
+        console.log('playSound');
+        var source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+        source.start(0);
+      }
+
+      function loadSound(url, cb) {
+        var req = new XMLHttpRequest();
+        req.open('GET', url, true);
+        req.responseType = 'arraybuffer';
+
+        req.onload = function() {
+          ctx.decodeAudioData(req.response, function(buffer) {
+            cb(null, buffer);
+          }, function(err) {
+            console.log(err);
+            cb(err);
+          });
+        }
+        req.send();
+      }
+
+      loadSound('audio/welcome.mp3', function(err, data) {
+        if (err) return console.log(err);
+        else console.log(data);
+        audio1 = data;
+        playSound(audio1);
+      });
+
+      loadSound('audio/msg.wav', function(err, data) {
+        if (err) return console.log(err);
+        else console.log(data);
+        beep = data;
+      })
+
+      function getClockTime() {
+        var time = new Date();
+        var timeString = '' + time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
+        return timeString;
+      }
     </script>
     <script type="text/javascript">
-        window.AudioContext = window.AudioContext || window.webkitAudioContext;
-        var ctx = new AudioContext();
 
-        var audio1 = null;
-        function playSound(buffer) {
-          var source = ctx.createBufferSource();
-          source.buffer = buffer;
-          source.connect(ctx.destination);
-          source.start(0);
-        }
-
-        function loadSound(url, cb) {
-          var req = new XMLHttpRequest();
-          req.open('GET', url, true);
-          req.responseType = "arraybuffer";
-
-          req.onload = function() {
-            ctx.decodeAudioData(req.response, function(buffer) {
-              console.log('audio received');
-              audio1 = buffer;
-              cb(null, 'Audio Loaded.');
-            }, function(err) {
-              console.log(err);
-              cb(err);
-            });
-          }
-          req.send();
-        }
-
-        loadSound('audio/welcome.mp3', function(err, data) {
-          if (err) return console.log(err);
-          else console.log(data);
-          playSound(audio1);
-        });
 
     </script>
   </body>

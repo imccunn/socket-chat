@@ -37,7 +37,8 @@ io.on('connection', function(socket) {
     var timeString = '' + time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
 
     console.log('message: ' + nameMsg[0] + ': ' + nameMsg[1]);
-    io.emit('cMsg', [timeString, nameMsg[0], nameMsg[1]]);
+    // This sends to all but the sender.
+    socket.broadcast.emit('cMsg', [timeString, nameMsg[0], nameMsg[1]]);
   });
   
   socket.on('typing', function(name) { // TODO: broadcast when user is typing
@@ -73,7 +74,7 @@ function findWithAttr(arr, attr, val) {
 }
 // ✓ Broadcast a message to connected users when someone connects or disconnects 
 // ✓ Add support for nicknames
-// Don’t send the same message to the user that sent it himself. Instead, append the message directly as soon as he presses enter.
+// ✓ Don’t send the same message to the user that sent it himself. Instead, append the message directly as soon as he presses enter.
 // ✓ Add “{user} is typing” functionality
 // Show who’s online
 // Add private messaging
