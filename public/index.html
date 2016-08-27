@@ -75,6 +75,11 @@
         $("#messages").append(li);
       });
 
+      socket.on('userJoin', function(user) {
+        var li = $('<li>').css({color: '#777'}).text('User ' + name + ' has joined.');
+        $('#messages').append(li);
+      })
+
       socket.on('userTyping', function(name) {
         clearTimeout(timer);
         var timer = setTimeout(function() {
@@ -98,6 +103,43 @@
         }
       });
 
+
+    </script>
+    <script type="text/javascript">
+        window.AudioContext = window.AudioContext || window.webkitAudioContext;
+        var ctx = new AudioContext();
+
+        var audio1 = null;
+        function playSound(buffer) {
+          var source = ctx.createBufferSource();
+          source.buffer = buffer;
+          source.connect(ctx.destination);
+          source.start(0);
+        }
+
+        function loadSound(url, cb) {
+          var req = new XMLHttpRequest();
+          req.open('GET', url, true);
+          req.responseType = "arraybuffer";
+
+          req.onload = function() {
+            ctx.decodeAudioData(req.response, function(buffer) {
+              console.log('audio received');
+              audio1 = buffer;
+              cb(null, 'Audio Loaded.');
+            }, function(err) {
+              console.log(err);
+              cb(err);
+            });
+          }
+          req.send();
+        }
+
+        loadSound('audio/welcome.mp3', function(err, data) {
+          if (err) return console.log(err);
+          else console.log(data);
+          playSound(audio1);
+        });
 
     </script>
   </body>

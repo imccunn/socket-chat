@@ -29,6 +29,7 @@ io.on('connection', function(socket) {
     users[findWithAttr(users, 'id', socket.id)].name = name;
     userNames.push(name);
     io.emit('updateRoom', userNames);
+    io.emit('userJoin', name);
     console.log('users: ', userNames);
   }); 
   socket.on('cMsg', function (nameMsg) {
@@ -45,12 +46,9 @@ io.on('connection', function(socket) {
 
   socket.on('disconnect', function(socket) {
     console.log('User disconnected.');
-    console.log(users);
-
     var userLeaving = users.findIndex(function(user) {
       return user.socket.disconnected === true;
     });
-
     console.log('user leaving: ', users[userLeaving].name);
     var userName = users[userLeaving].name;
     userNames.splice(userNames.indexOf(users[userLeaving].name), 1);
