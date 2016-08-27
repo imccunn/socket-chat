@@ -18,11 +18,15 @@ var userNames = [];
 io.on('connection', function(socket) {
   console.log('A user connected.');
   // Track users by socket
-  users.push(socket);
+  users.push({
+    id: socket.id,
+    name: 'default',
+    socket: socket
+  });
+  console.log('socket id: ', socket.id);
   
-
   socket.on('name', function(name) {
-    users[users.indexOf(socket)].name = name;
+    users[findWithAttr(users, 'id', socket.id)].name = name;
     userNames.push(name);
     io.emit('updateRoom', userNames);
     console.log('users: ', userNames);
@@ -37,22 +41,21 @@ io.on('connection', function(socket) {
   
   socket.on('typing', function(name) { // TODO: broadcast when user is typing
     io.emit('userTyping', name);
-  });   
+  });
+
   socket.on('disconnect', function(socket) {
     console.log('User disconnected.');
-    console.log(users)
-    var i = users.indexOf(socket);
-    var userleaving = users.find(function(u) {
-      return u.name === socket.name;
-    })
-    console.log('user leaving: ', userLeaving.name);
-    var userName = userNames[i];
-    if (users && i !== -1) {
-      userNames.splice(userNames.indexOf(users[i].name), 1);
-      users.splice(i, 1);
-    }
-    
-    io.emit('updateRoom')
+    console.log(users);
+
+    var userLeaving = users.findIndex(function(user) {
+      return user.socket.disconnected === true;
+    });
+
+    console.log('user leaving: ', users[userLeaving].name);
+    var userName = users[userLeaving].name;
+    userNames.splice(userNames.indexOf(users[userLeaving].name), 1);
+    users.splice(userLeaving, 1);
+    io.emit('updateRoom', userNames);
     io.emit('userDisconnect', userName);
   });
 });
@@ -61,8 +64,17 @@ http.listen(3000, function() {
   console.log('Server listening on port 3000');
 });
 
-// Broadcast a message to connected users when someone connects or disconnects
-// Add support for nicknames
+
+function findWithAttr(arr, attr, val) {
+  for (var i = 0; i < arr.length; i++) {
+    if (arr[i][attr] === val) {
+      return i;
+    }
+  }
+  return -1;
+}
+// ✓ Broadcast a message to connected users when someone connects or disconnects 
+// ✓ Add support for nicknames
 // Don’t send the same message to the user that sent it himself. Instead, append the message directly as soon as he presses enter.
 // Add “{user} is typing” functionality
 // Show who’s online

@@ -32,20 +32,18 @@
       <div id="status"></div>
     </div>
     
-    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script>
       var socket = io();
       var name = prompt("Enter your chat handle:");
       socket.emit('name', name);
       if (name.length < 1) name = "Pippy";
       
-      //$("#name").val(name);
       var userNames = [];
       var room = $('#room');
       room.append($('<p>').text(name));
       $('form').submit(function(){
-        //name = $("#name").val();
         var msg = document.getElementById("m").value;
         socket.emit('cMsg', [name, msg]);
 
@@ -54,7 +52,6 @@
       });
 
       socket.on('updateRoom', function(userNames) {
-    // so keep that in mind.For unit tests we'll want to stub the responses from github. [IDM]
         userNames = userNames;
         var room = $('#room');
         room.empty();
@@ -62,10 +59,12 @@
           room.append($('<p>').text(userNames[i]));
         }
       })
+
       socket.on("cMsg", function(msg) {
         var li = $("<li>").addClass('msg').text('[' + msg[0] + '] ' + msg[1] + ': ' + msg[2]);
         $("#messages").append(li);
       });
+
       socket.on('userTyping', function(name) {
         clearTimeout(timer);
         var timer = setTimeout(function() {
@@ -76,7 +75,7 @@
       });
 
       socket.on('userDisconnect', function(name) {
-        var li = $('<li>').style({color: '#333'}).text('User ' + name + ' has disconnected.');
+        var li = $('<li>').css({color: '#777'}).text('User ' + name + ' has disconnected.');
         $('#messages').append(li);
       })
 
