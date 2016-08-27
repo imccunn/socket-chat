@@ -73,10 +73,24 @@
       })
 
       socket.on("cMsg", function(msg) {
-        var li = $("<li>").addClass('msg').text('[' + msg[0] + '] ' + msg[1] + ': ' + msg[2]);
+        msg[2] = checkIfUrl(msg[2]) ?
+          $('<a>').text(msg[2])
+            .attr('href', msg[2])
+            .attr('target', '_blank')
+          : msg[2];
+        var li = $("<li>")
+          .addClass('msg')
+          .text('[' + msg[0] + '] ' + msg[1] + ': ')
+          .append(msg[2]);
+
         $("#messages").append(li);
         playSound(beep);
       });
+
+      function checkIfUrl(msg) {
+        var re = /(.com)/g;
+        return (re.exec(msg) !== null);
+      }
 
       socket.on('userJoin', function(user) {
         var li = $('<li>').css({color: '#777'}).text('User ' + user + ' has joined.');
