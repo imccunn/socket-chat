@@ -73,6 +73,11 @@
         }, 2000);
         $('#status').text('' + name + ' is typing something...');
         
+      });
+
+      socket.on('userDisconnect', function(name) {
+        var li = $('<li>').style({color: '#333'}).text('User ' + name + ' has disconnected.');
+        $('#messages').append(li);
       })
 
       var $cont = $('#messagesView');

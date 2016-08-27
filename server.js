@@ -40,15 +40,20 @@ io.on('connection', function(socket) {
   });   
   socket.on('disconnect', function(socket) {
     console.log('User disconnected.');
-    console.log(users);
+    console.log(users)
     var i = users.indexOf(socket);
-    console.log(i);
+    var userleaving = users.find(function(u) {
+      return u.name === socket.name;
+    })
+    console.log('user leaving: ', userLeaving.name);
+    var userName = userNames[i];
     if (users && i !== -1) {
       userNames.splice(userNames.indexOf(users[i].name), 1);
       users.splice(i, 1);
     }
     
     io.emit('updateRoom')
+    io.emit('userDisconnect', userName);
   });
 });
 
