@@ -9,27 +9,37 @@
   <body>
     <div class="main">
       <div>
-        <h2 class="headTitle">Socket.io Chat</h2>
+        <h2 class="headTitle">chat</h2>
       </div>
-      <div id="room" style="border: 1px solid #000;"></div>
-      <div id="chatContainer">
-        <div id="messagesView">
-          <ul id="messages">
-            
-          </ul>
-        </div>
+      <div style="display: table;">
+        <div style="display: table-row;">
+          <div style="display: table-cell; vertical-align: top; border: 1px solid #000; padding: 10px;">
+            <div style="width: 100px;">
+              <h4>Room</h4>
+              <hr>
+              <div id="room" style="height: 100%;"></div>
+            </div>
+          </div>
+          <div style="display: table-cell;">
+            <div id="chatContainer">
+              <div id="messagesView">
+                <ul id="messages">
+                  
+                </ul>
+                <div id="status" style="padding: 5px;"></div>
+              </div>
 
-        <form id="userInput">
+              <form id="userInput">
+                
+                <input type="text" placeholder="Enter message here..." id="m">
+                <input type="submit" value="Send">
+              </form>
 
-          <!-- <label for="name">handle: </label> -->
-          <!-- <input type="text" placeholder="Mr. Milk" value="Mr. Milk" id="name"> -->
+            </div>
+          </div>
           
-          <input type="text" placeholder="Enter message here..." id="m">
-          <input type="submit" value="Send">
-        </form>
-
+        </div>
       </div>
-      <div id="status"></div>
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
