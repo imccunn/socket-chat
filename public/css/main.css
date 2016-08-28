@@ -31,6 +31,7 @@ input[type="submit"]:hover {
 	border: 1px solid #000;
 	overflow: scroll;
 	margin: 10px;
+	padding-right: 10px;
 	height: 400px;
 	color: #28ED00;
 	background-color: #222;
@@ -54,9 +55,7 @@ input[type="submit"]:hover {
 }
 
 #userInput{
-	margin: 10px;
-	padding: 20px;
-	border: 1px solid #000;
+
 }
 
 #userInput input {
