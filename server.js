@@ -14,6 +14,7 @@ app.use(express.static('public'));
 
 var users = [];
 var userNames = [];
+var messageHistory = [];
 
 io.on('connection', function(socket) {
   console.log('A user connected.');
@@ -29,20 +30,24 @@ io.on('connection', function(socket) {
     users[findWithAttr(users, 'id', socket.id)].name = name;
     userNames.push(name);
     io.emit('updateRoom', userNames);
-    io.emit('userJoin', name);
+    var usrJoin = 'User ' + name + ' has joined.';
+    messageHistory.push(usrJoin);
+    io.emit('userJoin', usrJoin);
     console.log('users: ', userNames);
+    socket.emit('messageHistory', messageHistory);
   }); 
   socket.on('cMsg', function (nameMsg) {
-    var time = new Date();
-    var timeString = '' + time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
+    var timeString = getClockTime();
 
     console.log('message: ' + nameMsg[0] + ': ' + nameMsg[1]);
+    var broadcastMsg = [timeString, nameMsg[0], nameMsg[1]];
+    messageHistory.push(broadcastMsg);
     // This sends to all but the sender.
-    socket.broadcast.emit('cMsg', [timeString, nameMsg[0], nameMsg[1]]);
+    socket.broadcast.emit('cMsg', broadcastMsg);
   });
   
   socket.on('typing', function(name) { // TODO: broadcast when user is typing
-    io.emit('userTyping', name);
+    socket.broadcast.emit('userTyping', name);
   });
 
   socket.on('disconnect', function(socket) {
@@ -71,6 +76,14 @@ function findWithAttr(arr, attr, val) {
     }
   }
   return -1;
+}
+
+function getClockTime() {
+  var time = new Date();
+  var s = time.getSeconds();
+  s = (s < 10) ? ('0' + s) : s;
+  var timeString = '' + time.getHours() + ':' + time.getMinutes() + ':' + s;
+  return timeString;
 }
 // ✓ Broadcast a message to connected users when someone connects or disconnects 
 // ✓ Add support for nicknames

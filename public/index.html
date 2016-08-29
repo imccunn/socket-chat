@@ -10,12 +10,13 @@
     <div class="main">
       <div>
         <h2 class="headTitle">chat</h2>
+        <a href="#" id="activate">start</a>
       </div>
       <div style="display: table;">
         <div style="display: table-row;">
           <div style="display: table-cell; vertical-align: top; border: 1px solid #000; padding: 10px;">
             <div style="width: 100px;">
-              <h4>Room</h4>
+              <h4 style="margin: 0;">Room</h4>
               <hr>
               <div id="room" style="height: 100%;"></div>
             </div>
@@ -35,10 +36,8 @@
                 </tr>
                 </table>
               </form>
-
             </div>
           </div>
-          
         </div>
       </div>
     </div>
@@ -46,80 +45,103 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script>
-      var socket = io();
-      var name = prompt("Enter your chat handle:");
-      socket.emit('name', name);
-      if (name.length < 1) name = "Pippy";
-      
-      var userNames = [];
-      var room = $('#room');
-      room.append($('<p>').text(name));
-      $('form').submit(function(){
-        var msg = document.getElementById("m").value;
-        socket.emit('cMsg', [name, msg]);
-
-        document.getElementById("m").value = "";
-        var li = $("<li>").addClass('msg').text('[' + getClockTime() + '] ' + name + ': ' + msg);
-        $("#messages").append(li);
-        return false;
+      var act = $('#activate').on('click', function(e) {
+        startChat();
       });
 
-      socket.on('updateRoom', function(userNames) {
-        userNames = userNames;
-        var room = $('#room');
-        room.empty();
-        for (var i in userNames) {
-          room.append($('<p>').text(userNames[i]));
-        }
-      })
-
-      socket.on("cMsg", function(msg) {
-        msg[2] = checkIfUrl(msg[2]) ?
-          $('<a>').text(msg[2])
-            .attr('href', msg[2])
-            .attr('target', '_blank')
-          : msg[2];
-        var li = $("<li>")
-          .addClass('msg')
-          .text('[' + msg[0] + '] ' + msg[1] + ': ')
-          .append(msg[2]);
-
-        $("#messages").append(li);
-        playSound(beep);
-      });
-
-      function checkIfUrl(msg) {
-        var re = /(.com)/g;
-        return (re.exec(msg) !== null);
-      }
-
-      socket.on('userJoin', function(user) {
-        var li = $('<li>').css({color: '#777'}).text('User ' + user + ' has joined.');
-        $('#messages').append(li);
-      })
-
-      socket.on('userTyping', function(name) {
-        clearTimeout(timer);
-        var timer = setTimeout(function() {
-          $('#status').text('');
-        }, 2000);
-        $('#status').text('' + name + ' is typing something...');
+      function startChat() {
+        var socket = io();
+        var name = prompt("Enter your chat handle:");
         
-      });
+        if (name.length < 1) name = "Pippy";
+        socket.on('messageHistory', function(msgs) {
+          console.log(msgs);
+          for (var i in msgs) {
+            var cur = msgs[i];
+            var li = $('<li>')
+              .addClass('msg')
+              .text('[' + cur[0] + '] ' + cur[1] + ': ')
+              .append(cur[2]);
 
-      socket.on('userDisconnect', function(name) {
-        var li = $('<li>').css({color: '#777'}).text('User ' + name + ' has disconnected.');
-        $('#messages').append(li);
-      })
+          var messages = $("#messages");
+          messages.append(li);
+          messages[0].scrollTop = $cont[0].scrollHeight;
+          }
+        })
+        socket.emit('name', name);
+        var userNames = [];
+        var room = $('#room');
+        room.append($('<p>').text(name));
+        $('form').submit(function(){
+          var msg = document.getElementById("m").value;
+          socket.emit('cMsg', [name, msg]);
 
-      var $cont = $('#messagesView');
+          document.getElementById("m").value = "";
+          var li = $("<li>").addClass('msg').text('[' + getClockTime() + '] ' + name + ': ' + msg);
+          $("#messages").append(li);
+          return false;
+        });
 
-      $('#m').keyup(function(e) {
-        socket.emit('typing', name);
-        if (e.keyCode == 13) {
-          $cont[0].scrollTop = $cont[0].scrollHeight;
+        socket.on('updateRoom', function(userNames) {
+          userNames = userNames;
+          var room = $('#room');
+          room.empty();
+          for (var i in userNames) {
+            room.append($('<p>').text(userNames[i]));
+          }
+        })
+
+        socket.on("cMsg", function(msg) {
+          msg[2] = checkIfUrl(msg[2]) ?
+            $('<a>').text(msg[2])
+              .attr('href', msg[2])
+              .attr('target', '_blank')
+            : msg[2];
+          var li = $("<li>")
+            .addClass('msg')
+            .text('[' + msg[0] + '] ' + msg[1] + ': ')
+            .append(msg[2]);
+
+          var messages = $("#messages");
+          messages.append(li);
+          messages[0].scrollTop = $cont[0].scrollHeight;
+
+          playSound(beep);
+        });
+
+        function checkIfUrl(msg) {
+          var re = /(.com)/g;
+          return (re.exec(msg) !== null);
         }
-      });
+
+        socket.on('userJoin', function(user) {
+          var li = $('<li>').css({color: '#777'}).text('User ' + user + ' has joined.');
+          $('#messages').append(li);
+        })
+
+        socket.on('userTyping', function(name) {
+          clearTimeout(timer);
+          var timer = setTimeout(function() {
+            $('#status').text('');
+          }, 2000);
+          $('#status').text('' + name + ' is typing something...');
+          
+        });
+
+        socket.on('userDisconnect', function(name) {
+          var li = $('<li>').css({color: '#777'}).text('User ' + name + ' has disconnected.');
+          $('#messages').append(li);
+        });
+
+        var $cont = $('#messages');
+
+        $('#m').keyup(function(e) {
+          socket.emit('typing', name);
+          if (e.keyCode == 13) {
+            $cont[0].scrollTop = $cont[0].scrollHeight;
+          }
+        });
+      }
 
       window.AudioContext = window.AudioContext || window.webkitAudioContext;
       var ctx = new AudioContext();
@@ -165,7 +187,9 @@
 
       function getClockTime() {
         var time = new Date();
-        var timeString = '' + time.getHours() + ':' + time.getMinutes() + ':' + time.getSeconds();
+        var s = time.getSeconds();
+        s = (s < 10) ? ('0' + s) : s;
+        var timeString = '' + time.getHours() + ':' + time.getMinutes() + ':' + s;
         return timeString;
       }
     </script>
