@@ -31,7 +31,6 @@ io.on('connection', function(socket) {
     userNames.push(name);
     io.emit('updateRoom', userNames);
     var usrJoin = 'User ' + name + ' has joined.';
-    messageHistory.push(usrJoin);
     io.emit('userJoin', usrJoin);
     console.log('users: ', userNames);
     socket.emit('messageHistory', messageHistory);
@@ -52,6 +51,7 @@ io.on('connection', function(socket) {
 
   socket.on('disconnect', function(socket) {
     console.log('User disconnected.');
+    if (!users.findIndex) return;
     var userLeaving = users.findIndex(function(user) {
       return user.socket.disconnected === true;
     });

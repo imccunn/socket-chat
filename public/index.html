@@ -114,10 +114,10 @@
           return (re.exec(msg) !== null);
         }
 
-        socket.on('userJoin', function(user) {
-          var li = $('<li>').css({color: '#777'}).text('User ' + user + ' has joined.');
+        socket.on('userJoin', function(userJoin) {
+          var li = $('<li>').css({color: '#777'}).text(userJoin);
           $('#messages').append(li);
-        })
+        });
 
         socket.on('userTyping', function(name) {
           clearTimeout(timer);
