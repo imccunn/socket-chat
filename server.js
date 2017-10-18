@@ -24,8 +24,9 @@ io.on('connection', function(socket) {
     name: 'default',
     socket: socket
   });
+
   console.log('socket id: ', socket.id);
-  
+
   socket.on('name', function(name) {
     users[findWithAttr(users, 'id', socket.id)].name = name;
     userNames.push(name);
@@ -34,7 +35,8 @@ io.on('connection', function(socket) {
     io.emit('userJoin', usrJoin);
     console.log('users: ', userNames);
     socket.emit('messageHistory', messageHistory);
-  }); 
+  });
+
   socket.on('cMsg', function (nameMsg) {
     var timeString = getClockTime();
 
@@ -44,7 +46,7 @@ io.on('connection', function(socket) {
     // This sends to all but the sender.
     socket.broadcast.emit('cMsg', broadcastMsg);
   });
-  
+
   socket.on('typing', function(name) { // TODO: broadcast when user is typing
     socket.broadcast.emit('userTyping', name);
   });
@@ -85,7 +87,7 @@ function getClockTime() {
   var timeString = '' + time.getHours() + ':' + time.getMinutes() + ':' + s;
   return timeString;
 }
-// ✓ Broadcast a message to connected users when someone connects or disconnects 
+// ✓ Broadcast a message to connected users when someone connects or disconnects
 // ✓ Add support for nicknames
 // ✓ Don’t send the same message to the user that sent it himself. Instead, append the message directly as soon as he presses enter.
 // ✓ Add “{user} is typing” functionality

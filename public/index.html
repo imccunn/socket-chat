@@ -41,7 +41,7 @@
         </div>
       </div>
     </div>
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.8/socket.io.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script>
@@ -52,7 +52,7 @@
       function startChat() {
         var socket = io();
         var name = prompt("Enter your chat handle:");
-        
+
         if (name.length < 1) name = "Pippy";
         socket.on('messageHistory', function(msgs) {
           console.log(msgs);
@@ -67,12 +67,13 @@
           messages.append(li);
           messages[0].scrollTop = $cont[0].scrollHeight;
           }
-        })
+        });
+
         socket.emit('name', name);
         var userNames = [];
         var room = $('#room');
         room.append($('<p>').text(name));
-        $('form').submit(function(){
+        $('form').submit(function() {
           var msg = document.getElementById("m").value;
           socket.emit('cMsg', [name, msg]);
 
@@ -89,7 +90,7 @@
           for (var i in userNames) {
             room.append($('<p>').text(userNames[i]));
           }
-        })
+        });
 
         socket.on("cMsg", function(msg) {
           msg[2] = checkIfUrl(msg[2]) ?
@@ -125,7 +126,6 @@
             $('#status').text('');
           }, 2000);
           $('#status').text('' + name + ' is typing something...');
-          
         });
 
         socket.on('userDisconnect', function(name) {
@@ -146,8 +146,8 @@
       window.AudioContext = window.AudioContext || window.webkitAudioContext;
       var ctx = new AudioContext();
 
-      audio1 = null;
-      beep = null;
+      var audio1 = null;
+      var beep = null;
       function playSound(buffer) {
         console.log('playSound');
         var source = ctx.createBufferSource();
