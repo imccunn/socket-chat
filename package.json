@@ -4,12 +4,9 @@
   "description": "A simple chatting app with node/express and socket.io.",
   "main": "server.js",
   "scripts": {
-    "test": "grunt"
+    "start": "node server.js"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/imccunn/socket-chat.git"
-  },
+  "repository": "https://github.com/imccunn/socket-chat.git",
   "author": "Ian McCunn",
   "license": "MIT",
   "bugs": {
@@ -17,7 +14,20 @@
   },
   "homepage": "https://github.com/imccunn/socket-chat",
   "dependencies": {
-    "express": "^4.14.0",
-    "socket.io": "^1.4.8"
-  }
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-react": "^6.24.1",
+    "chai": "^4.1.2",
+    "express": "^4.16.2",
+    "istanbul": "^0.4.5",
+    "mocha": "^5.0.0",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "sinon": "^4.2.2",
+    "socket.io": "^2.0.4",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.11.1"
+  },
+  "private": true
 }
