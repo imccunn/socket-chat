@@ -18,6 +18,8 @@ var messageHistory = [];
 
 io.on('connection', function(socket) {
   console.log('A user connected.');
+  console.log('socket id: ', socket.id);
+
   // Track users by socket
   users.push({
     id: socket.id,
@@ -25,7 +27,6 @@ io.on('connection', function(socket) {
     socket: socket
   });
 
-  console.log('socket id: ', socket.id);
 
   socket.on('name', function(name) {
     users[findWithAttr(users, 'id', socket.id)].name = name;
@@ -40,7 +41,7 @@ io.on('connection', function(socket) {
   socket.on('cMsg', function (nameMsg) {
     var timeString = getClockTime();
 
-    console.log('message: ' + nameMsg[0] + ': ' + nameMsg[1]);
+    console.log(`[${(new Date())}] User '${nameMsg[0]}' sent message: '${nameMsg[1]}'`);
     var broadcastMsg = [timeString, nameMsg[0], nameMsg[1]];
     messageHistory.push(broadcastMsg);
     // This sends to all but the sender.
