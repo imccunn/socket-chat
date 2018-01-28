@@ -78,7 +78,10 @@
           socket.emit('cMsg', [name, msg]);
 
           document.getElementById("m").value = "";
-          var li = $("<li>").addClass('msg').text('[' + getClockTime() + '] ' + name + ': ' + msg);
+          var li = $("<li>")
+            .addClass('msg')
+            .css('color', '#fff')
+            .text('[' + getClockTime() + '] ' + name + ': ' + msg);
           $("#messages").append(li);
           return false;
         });

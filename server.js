@@ -1,14 +1,9 @@
-// index.js
-
 'use strict';
+
 var express = require('express');
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-
-// app.get('/', function(req, res) {
-//  res.sendFile(__dirname + '/app/index.html');
-// });
 
 app.use(express.static('public'));
 
@@ -20,19 +15,20 @@ io.on('connection', function(socket) {
   console.log('A user connected.');
   console.log('socket id: ', socket.id);
 
-  // Track users by socket
   users.push({
     id: socket.id,
     name: 'default',
     socket: socket
   });
 
-
   socket.on('name', function(name) {
-    users[findWithAttr(users, 'id', socket.id)].name = name;
+    let user = users.find((u) => {
+      return u.id === socket.id;
+    });
+    user.name = name;
     userNames.push(name);
     io.emit('updateRoom', userNames);
-    var usrJoin = 'User ' + name + ' has joined.';
+    const usrJoin = `User ${name} has joined.`;
     io.emit('userJoin', usrJoin);
     console.log('users: ', userNames);
     socket.emit('messageHistory', messageHistory);
@@ -42,13 +38,16 @@ io.on('connection', function(socket) {
     var timeString = getClockTime();
 
     console.log(`[${(new Date())}] User '${nameMsg[0]}' sent message: '${nameMsg[1]}'`);
-    var broadcastMsg = [timeString, nameMsg[0], nameMsg[1]];
+
+    // TODO: Time should be generated on the server but not broadcast to the client. When the
+    // client receives the message a time should be generated. [IDM]
+    const broadcastMsg = [timeString, nameMsg[0], nameMsg[1]];
     messageHistory.push(broadcastMsg);
     // This sends to all but the sender.
     socket.broadcast.emit('cMsg', broadcastMsg);
   });
 
-  socket.on('typing', function(name) { // TODO: broadcast when user is typing
+  socket.on('typing', function(name) {
     socket.broadcast.emit('userTyping', name);
   });
 
@@ -70,16 +69,6 @@ io.on('connection', function(socket) {
 http.listen(3000, function() {
   console.log('Server listening on port 3000');
 });
-
-
-function findWithAttr(arr, attr, val) {
-  for (var i = 0; i < arr.length; i++) {
-    if (arr[i][attr] === val) {
-      return i;
-    }
-  }
-  return -1;
-}
 
 function getClockTime() {
   var time = new Date();
