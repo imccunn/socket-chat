@@ -1,15 +1,15 @@
 'use strict';
 
-var express = require('express');
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
+const express = require('express');
+const app = require('express')();
+const http = require('http').Server(app);
+const io = require('socket.io')(http);
 
 app.use(express.static('public'));
 
-var users = [];
-var userNames = [];
-var messageHistory = [];
+let users = [];
+let userNames = [];
+let messageHistory = [];
 
 io.on('connection', function(socket) {
   console.log('A user connected.');
@@ -35,7 +35,7 @@ io.on('connection', function(socket) {
   });
 
   socket.on('cMsg', function (nameMsg) {
-    var timeString = getClockTime();
+    let timeString = getClockTime();
 
     console.log(`[${(new Date())}] User '${nameMsg[0]}' sent message: '${nameMsg[1]}'`);
 
@@ -54,11 +54,11 @@ io.on('connection', function(socket) {
   socket.on('disconnect', function(socket) {
     console.log('User disconnected.');
     if (!users.findIndex) return;
-    var userLeaving = users.findIndex(function(user) {
+    let userLeaving = users.findIndex(function(user) {
       return user.socket.disconnected === true;
     });
     console.log('user leaving: ', users[userLeaving].name);
-    var userName = users[userLeaving].name;
+    let userName = users[userLeaving].name;
     userNames.splice(userNames.indexOf(users[userLeaving].name), 1);
     users.splice(userLeaving, 1);
     io.emit('updateRoom', userNames);
@@ -71,10 +71,10 @@ http.listen(3000, function() {
 });
 
 function getClockTime() {
-  var time = new Date();
-  var s = time.getSeconds();
+  let time = new Date();
+  let s = time.getSeconds();
   s = (s < 10) ? ('0' + s) : s;
-  var timeString = '' + time.getHours() + ':' + time.getMinutes() + ':' + s;
+  let timeString = '' + time.getHours() + ':' + time.getMinutes() + ':' + s;
   return timeString;
 }
 // ✓ Broadcast a message to connected users when someone connects or disconnects
